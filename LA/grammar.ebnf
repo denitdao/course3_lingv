@@ -1,0 +1,50 @@
+Program       = program ProgName DeclSection DoSection.
+ProgName      = Ident.
+Ident         = Letter {Letter | Digit}.
+
+DeclSection   = var DeclarList.
+DeclarList    = Declaration {";" Declaration} ";".
+Declaration   = Type IdentList.
+IdentList     = Ident {"," Ident}.
+Type          = integer | real | boolean.
+
+DoSection     = begin StatementList end.
+StatementList = Statement {";" Statement} ";".
+Statement     = Assign | Inp | Out | ForStatement | IfStatement.
+
+Assign        = Ident "=" Expression.
+Expression    = ArithmExpr | BoolExpr.
+BoolExpr      = ArithmExpr RelOp ArithmExpr.
+ArithmExpr    = [Sign]Term | ArithmExpr "+" Term | ArithmExpr "-" Term.
+Term          = Factor | Term "*" Factor | Term "/" Factor 
+        | Term "div" Factor | Term "^" Factor.
+Factor        = Ident | Const | "(" ArithmExpr ")".
+
+Inp           = read  "(" IdentList ")".
+Out           = write "(" IdentList ")".
+ForStatement  = for "(" IndExpr ")" DoBlock.
+IndExpr       = Assign1 ";" CondExpr ";" Assign2.
+Assign1       = Assign.
+CondExpr      = BoolExpr.
+Assign2       = Assign.
+
+IfStatement   = if CondExpr then DoBlock.
+CondExpr      = BoolExpr.
+
+DoBlock       = Statement | "{" StatementList "}".
+
+Const         = IntNumb | RealNumb | BoolConst.
+IntNumb       = [Sign] UnsignedInt.
+RealNumb      = [Sign] UnsignedReal.
+Sign          = "+" | "-".
+
+UnsignedInt   = Digit {Digit}.
+UnsignedReal  = "." UnsignedInt | UnsignedInt "." 
+        | UnsignedInt "." UnsignedInt.
+BoolConst     = true | false.
+
+Letter        = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" 
+        | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" 
+        | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z".
+Digit         = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |"8" | "9".
+RelOp         = "==" | "<= " | "<" | ">" | ">=" | "!=".

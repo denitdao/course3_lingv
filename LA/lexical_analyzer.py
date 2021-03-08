@@ -1,3 +1,5 @@
+import pprint
+
 programFileName = 'test.dch'
 
 # Таблиця лексем мови
@@ -48,7 +50,7 @@ tableIdIntRealNum = {2: 'id',
 
 # Діаграма станів
 #                      Q                               q0                 F
-# M = ({0,1,2,3,4,5,6,7,8,9,10,11,12,101,102}, Σ,  δ , 0 , {2,5,6,7,8,9,10,11,12,101,102})
+# M = ({0,1,2,3,4,5,6,7,8,9,10,11,12,13,101,102}, Σ,  δ , 0 , {2,5,6,7,8,9,10,11,12,101,102})
 
 # δ - state-transition_function
 stf = {(0, 'Letter'): 1,  (1, 'Letter'): 1, (1, 'Digit'): 1, (1, 'other'): 2,
@@ -247,6 +249,9 @@ lex()
 
 # Таблиці: розбору, ідентифікаторів та констант
 print('-' * 30)
-print('tableOfSymb:{0}'.format(tableOfSymb))
-print('tableOfId:{0}'.format(tableOfId))
-print('tableOfConst:{0}'.format(tableOfConst))
+print('tableOfSymb:')
+pprint.pprint(tableOfSymb)
+print('tableOfId:')
+pprint.pprint(tableOfId)
+print('tableOfConst:')
+pprint.pprint(tableOfConst)
