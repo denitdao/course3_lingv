@@ -1,0 +1,22 @@
+Program = program AssignList end .
+AssignList = Assign  { Assign } .
+Ident = Letter {Letter | Digit } .
+Assign = Ident ':=' Expr.
+Num = [Sign] (Float | Int) .
+Float = Digit {Digit} '.' {Digit} .
+Int = Digit {Digit} .
+Sign = '+' | '-'	.
+Expr = [Sign] Term 
+                   | Expr '+' Term 
+                   | Expr '-' Term	.
+Term = Factor | Term '*' Factor | Term '/' Factor	.
+Factor = Ident | Num | '(' Expr ')'	.
+
+Letter = a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z .
+Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' .
+WhiteSpace = (Blank|Tab) {Blank|Tab} .
+Blank = "' '" .
+Tab = '\t' .
+Newline = '\n' .
+
+  

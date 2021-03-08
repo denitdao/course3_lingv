@@ -1,0 +1,6 @@
+program _name
+var
+	real x;
+begin
+	x = 2;
+end
