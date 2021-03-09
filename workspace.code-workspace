@@ -4,5 +4,21 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"syntax.highlightLanguages": [
+			"c",
+			"cpp",
+			"python",
+			"typescript",
+			"typescriptreact",
+			"javascript",
+			"go",
+			"rust",
+			"php",
+			"ruby",
+			"shellscript",
+			"ocaml",
+			"lua"
+		]
+	}
 }
