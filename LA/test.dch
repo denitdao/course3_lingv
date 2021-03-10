@@ -1,17 +1,6 @@
-program name
-var
+program program name
 	real x, y;
-	integer i,j,a;
-    boolean b;
 begin
-	read(a);
-	j=10;
-	for(i =-1; i<= j; i =i+ a ) {
-		if b ==true then
-			b = i < a ^2;
-		write( b);
-	}
-	if b!= false then
-		b = false;
-	write(x, y);
+	< <= = == != <a
+	read(x);
 end

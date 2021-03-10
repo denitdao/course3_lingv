@@ -78,7 +78,7 @@ program name
 var
 	real x, y;
 begin
-	x =! 2;
+	x =! 2; 
 end
 
 --------------- invalid test 2 ---------------
