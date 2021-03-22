@@ -1,5 +1,11 @@
-program
-
+program name
+var
+	real x, y;
+begin
+	read(id);
+	write();
+	read(a);
+	a = -10 + (1.3 + true) * 2;
+	b = true;
+	x = 4 (+ 19 * 2) div 10;
 end
-
-
