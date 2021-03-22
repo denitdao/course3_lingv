@@ -1,0 +1,90 @@
+--------------- full version ---------------
+program name
+var
+	real x, y, z;
+	integer a, b, c, i, j;
+    boolean t, f;
+begin
+	read(a, b, c);
+	z = 0.;
+
+	for(i = -1; i <= a; i = i + b) {
+		x = a div i;
+		y = a / x;
+		if (y < x) then
+			z = z + x ^ 2 ^ 2 - (15.5 - .2);
+	}
+
+	write(i, z);
+
+	t = true;
+	f = false;
+	for (j = 0; j <= z; j = j + (z div 3))
+		if (t) then {
+			f = (f != true);
+			t = f;
+		}
+	write(t);
+end
+
+--------------- working test 1 ---------------
+program name
+var
+	real r;
+	integer i;
+    boolean b;
+begin
+	read(r);
+
+	for(i = -1; i >= -10^2; i = i - 10) {
+		r = r + 10. - .10 / 0.5 div 2 * -10;
+	}
+
+	if b != false then
+		b = true;
+
+	write(i, b);
+end
+
+--------------- working test 2 ---------------
+program name
+var
+	real x, y;
+	integer i,j,a;
+    boolean b;
+begin
+	read(a);
+	j=10;
+	for(i =-1; i<= j; i =i+ a ) {
+		if b ==true then
+			b = i < a ^2;
+		write( b);
+	}
+	if b!= false then
+		b = false;
+	write(x, y);
+end
+
+--------------- invalid test 1 (valid) ---------------
+program name
+var
+	real x, y;
+begin
+	read(a.);
+end
+
+--------------- invalid test 2 ---------------
+program name
+var
+	real x, y;
+begin
+	x =! 2; 
+end
+
+--------------- invalid test 2 ---------------
+program _name
+var
+	real x;
+begin
+	x = 2;
+end
