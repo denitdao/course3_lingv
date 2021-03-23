@@ -1,9 +1,9 @@
-program program name
+program name
 var
-	reals real x, y;
+	real x, y;
 begin
 	read(a);
-	if a = b then {
-		x == 10;
+	if a == b then {
+		x = 10;
 	};
 end

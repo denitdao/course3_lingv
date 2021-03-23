@@ -78,3 +78,13 @@ begin
 end
 
 --------------- invalid test 2 ---------------
+
+program name
+var
+	real x, y;
+begin
+	read(a);
+	if a = b then {
+		x == 10;
+	};
+end

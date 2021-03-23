@@ -1,20 +1,13 @@
 from lexical_analyzer import lex
 from lexical_analyzer import tableOfSymb  # , tableOfVar, tableOfConst
 
-
 lex()
 print('-'*30)
-# print('tableOfSymb:{0}'.format(tableOfSymb))
-# print('-'*30)
 
 # номер рядка таблиці розбору/лексем/символів ПРОГРАМИ tableOfSymb
 numRow = 1
 # кількість записів у таблиці розбору
 len_tableOfSymb = len(tableOfSymb)
-
-# Функція для розбору за правилом
-# Program = program StatementList end
-# читає таблицю розбору tableOfSymb
 
 
 def parseProgram():
@@ -138,7 +131,7 @@ def parseDoSection():
 def parseDeclarList():
     print('\tparseDeclarList():')
     while parseDeclaration():
-        parseToken(';', 'punct', '')
+        parseToken(';', 'punct', '\t'*2)
     return True
 
 
@@ -183,13 +176,13 @@ def parseIdentList():
 
 def parseIdent():
     global numRow
-    print('\t'*2 + 'parseIdent():')
+    print('\t'*3 + 'parseIdent():')
     # прочитаємо поточну лексему в таблиці розбору
     numLine, lex, tok = getSymb()
     # якщо токен - ідентифікатор
     if tok == 'id':
         numRow += 1
-        print('+'+'\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+        print('+'+'\t'*4 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
         return True
     else:
         failParse('невідповідність інструкцій', (numLine, lex, tok, 'id'))
@@ -197,14 +190,14 @@ def parseIdent():
 
 
 def parseStatementList():
-    print('\tparseStatementList():')
+    print('~~~\tparseStatementList():')
     F = True
     while F:
         F = parseStatement()
         if F == 'пропуск символу ;':
             pass
         elif F == True:
-            parseToken(';', 'punct', '')
+            parseToken(';', 'punct', '\t')
         else: 
             break
     return True
@@ -241,7 +234,7 @@ def parseAssign():
     global numRow
     print('\t'*3 + 'parseAssign():')
     parseIdent()
-    if parseToken('=', 'assign_op', '\t\t\t'):
+    if parseToken('=', 'assign_op', '\t'*3):
         return parseArithmExpr()
     else:
         return False
@@ -333,22 +326,22 @@ def parseFactor():
 
 
 def parseInp():
-    F = parseToken('read', 'keyword', '')
+    F = parseToken('read', 'keyword', '\t'*3)
     if F:
-        F = (parseToken('(', 'brackets_op', '') and 
+        F = (parseToken('(', 'brackets_op', '\t'*3) and 
             parseIdentList() and 
-            parseToken(')', 'brackets_op', ''))
+            parseToken(')', 'brackets_op', '\t'*3))
     return F
 
 
 def parseOut():
-    F = parseToken('write', 'keyword', '')
+    F = parseToken('write', 'keyword', '\t'*3)
     if F:
-        F = parseToken('(', 'brackets_op', '')
+        F = parseToken('(', 'brackets_op', '\t'*3)
         _, lex, tok = getSymb()
         if (lex, tok) != (')', 'brackets_op'):
             parseIdentList() 
-        F = F and parseToken(')', 'brackets_op', '')
+        F = F and parseToken(')', 'brackets_op', '\t'*3)
     return F
 
 
@@ -356,11 +349,12 @@ def parseOut():
 def parseIfStatement():
     global numRow
     print('\t'*3 + 'parseIfStatement():')
-    _, lex, tok = getSymb()
+    numLine, lex, tok = getSymb()
     if lex == 'if' and tok == 'keyword':
         numRow += 1
+        print('+'+'\t'*4 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
         parseBoolExpr()
-        parseToken('then', 'keyword', '\t'*5)
+        parseToken('then', 'keyword', '\t'*4)
         return parseDoBlock()
     else:
         return False
@@ -386,9 +380,9 @@ def parseDoBlock():
     print('\t'*3 + 'parseDoBlock():')
     _, lex, tok = getSymb()
     if lex == '{' and tok == 'brackets_op':
-        parseToken('{', 'brackets_op', '--\t'*6)
+        parseToken('{', 'brackets_op', '--\t'*4)
         parseStatementList()
-        parseToken('}', 'brackets_op', '--\t'*6)
+        parseToken('}', 'brackets_op', '--\t'*4)
         return 'пропуск символу ;' # для валідації, що після } не має бути ;
     else:
         return parseStatement()
