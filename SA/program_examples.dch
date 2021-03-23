@@ -11,7 +11,7 @@ begin
 	for(i = -1; i <= a; i = i + b) {
 		x = a div i;
 		y = a / x;
-		if (y < x) then
+		if y < x then
 			z = z + x ^ 2 ^ 2 - (15.5 - .2);
 	}
 
@@ -20,8 +20,9 @@ begin
 	t = true;
 	f = false;
 	for (j = 0; j <= z; j = j + (z div 3))
-		if (t) then {
-			f = (f != true);
+		if t == true then {
+			if f != true then
+				f = false;
 			t = f;
 		}
 	write(t);
@@ -37,7 +38,7 @@ begin
 	read(r);
 
 	for(i = -1; i >= -10^2; i = i - 10) {
-		r = r + 10. - .10 / 0.5 div 2 * -10;
+		r = r + 10. - .10 / 0.5 div 2 * 10;
 	}
 
 	if b != false then
@@ -57,7 +58,7 @@ begin
 	j=10;
 	for(i =-1; i<= j; i =i+ a ) {
 		if b ==true then
-			b = i < a ^2;
+			b = i + a ^2;
 		write( b);
 	}
 	if b!= false then
@@ -66,25 +67,14 @@ begin
 end
 
 --------------- invalid test 1 (valid) ---------------
-program name
+program program name
 var
-	real x, y;
+	real real x, y;
 begin
-	read(a.);
+	read(a);
+	if a = b then {
+		x == 10;
+	};
 end
 
 --------------- invalid test 2 ---------------
-program name
-var
-	real x, y;
-begin
-	x =! 2; 
-end
-
---------------- invalid test 2 ---------------
-program _name
-var
-	real x;
-begin
-	x = 2;
-end

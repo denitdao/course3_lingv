@@ -4,8 +4,8 @@ from lexical_analyzer import tableOfSymb  # , tableOfVar, tableOfConst
 
 lex()
 print('-'*30)
-print('tableOfSymb:{0}'.format(tableOfSymb))
-print('-'*30)
+# print('tableOfSymb:{0}'.format(tableOfSymb))
+# print('-'*30)
 
 # номер рядка таблиці розбору/лексем/символів ПРОГРАМИ tableOfSymb
 numRow = 1
@@ -56,7 +56,7 @@ def parseToken(lexeme, token, indent):
     if (lex, tok) == (lexeme, token):
         # вивести у консоль номер рядка програми та лексему і токен
         print(
-            indent+'parseToken: В рядку {0} токен {1}'.format(numLine, (lexeme, token)))
+            '+ '+indent+'parseToken: В рядку {0} токен {1}'.format(numLine, (lexeme, token)))
         return True
     else:
         # згенерувати помилку та інформацію про те, що
@@ -106,6 +106,11 @@ def failParse(str, tuple):
         print('Parser ERROR: \n\t В рядку {0} неочікуваний елемент ({1}, {2}). \n\t Очікувався - {3}.'.format(
             numLine, lex, tok, expected))
         exit(3)
+    elif str == 'mismatch in BoolExpr':
+        (numLine, lex, tok, expected) = tuple
+        print('Parser ERROR: \n\t В рядку {0} неочікуваний елемент ({1}, {2}). \n\t Очікувався - {3}.'.format(
+            numLine, lex, tok, expected))
+        exit(4)  
 
 # ---------------------------------- PARSERS ----------------------------------
 
@@ -148,9 +153,9 @@ def parseType():
     global numRow
     print('\t'*2 + 'parseType():')
     numLine, lex, tok = getSymb()
-    if tok == 'keyword' and lex in ('real', 'int', 'bool'):
+    if tok == 'keyword' and lex in ('real', 'integer', 'boolean'):
         numRow += 1
-        print('\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+        print('+'+'\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
         return True
     elif (lex, tok) == ('begin', 'keyword'):
         return False
@@ -169,7 +174,7 @@ def parseIdentList():
         numLine, lex, tok = getSymb()
         if tok == 'punct' and lex == ',':
             numRow += 1
-            print('\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+            print('+'+'\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
             parseIdent()
         else:
             F = False
@@ -184,7 +189,7 @@ def parseIdent():
     # якщо токен - ідентифікатор
     if tok == 'id':
         numRow += 1
-        print('\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+        print('+'+'\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
         return True
     else:
         failParse('невідповідність інструкцій', (numLine, lex, tok, 'id'))
@@ -193,8 +198,15 @@ def parseIdent():
 
 def parseStatementList():
     print('\tparseStatementList():')
-    while parseStatement():
-        parseToken(';', 'punct', '')
+    F = True
+    while F:
+        F = parseStatement()
+        if F == 'пропуск символу ;':
+            pass
+        elif F == True:
+            parseToken(';', 'punct', '')
+        else: 
+            break
     return True
 
 
@@ -215,6 +227,8 @@ def parseStatement():
         return parseForStatement()
     # parseStatement() має завершити роботу
     elif (lex, tok) == ('end', 'keyword'):
+        return False
+    elif (lex, tok) == ('}', 'brackets_op'):
         return False
     # жодна з інструкцій не відповідає поточній лексемі у таблиці розбору
     else:
@@ -245,7 +259,7 @@ def parseExpression():
         numLine, lex, tok = getSymb()
         if tok in ('add_op'):
             numRow += 1
-            print('\t'*5 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+            print('+'+'\t'*5 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
             parseTerm()
         else:
             F = False
@@ -260,7 +274,7 @@ def parseArithmExpr():
     numLine, lex, tok = getSymb()
     if (tok == 'add_op'):
         numRow += 1
-        print('\t'*5 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+        print('+'+'\t'*5 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
     
     parseTerm()
     F = True
@@ -270,7 +284,7 @@ def parseArithmExpr():
         numLine, lex, tok = getSymb()
         if tok in ('add_op'):
             numRow += 1
-            print('\t'*5 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+            print('+'+'\t'*5 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
             parseTerm()
         else:
             F = False
@@ -288,7 +302,7 @@ def parseTerm():
         numLine, lex, tok = getSymb()
         if tok in ('mult_op', 'pow_op'):
             numRow += 1
-            print('\t'*6 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+            print('+'+'\t'*6 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
             parseFactor()
         else:
             F = False
@@ -298,18 +312,17 @@ def parseTerm():
 def parseFactor():
     global numRow
     numLine, lex, tok = getSymb()
-    print(
-        '\t'*6 + 'parseFactor():=========рядок: {0}\t (lex, tok):{1}'.format(numLine, (lex, tok)))
+    print('\t'*6 + 'parseFactor():')
 
     # перша і друга альтернативи для Factor
     # якщо лексема - це константа або ідентифікатор
     if tok in ('intnum', 'realnum', 'boolval', 'id'):
         numRow += 1
-        print('\t'*6 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+        print('+'+'\t'*6 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
 
     # третя альтернатива для Factor
     # якщо лексема - це відкриваюча дужка
-    elif lex == '(':
+    elif lex == '(' and tok == 'brackets_op':
         parseToken('(', 'brackets_op', '--\t'*6)
         parseArithmExpr()
         parseToken(')', 'brackets_op', '--\t'*6)
@@ -317,29 +330,6 @@ def parseFactor():
         failParse('невідповідність у Expression.Factor', (numLine, lex,
                                                           tok, 'rel_op, int, float, ident або \'(\' Expression \')\''))
     return True
-
-
-# розбір інструкції розгалудження за правилом
-# IfStatement = if BoolExpr then Statement else Statement endif
-# функція названа parseIf() замість parseIfStatement()
-def parseIfStatement():
-    global numRow
-    _, lex, tok = getSymb()
-    if lex == 'if' and tok == 'keyword':
-        numRow += 1
-        parseBoolExpr()
-        parseToken('then', 'keyword', '\t'*5)
-        parseStatement()
-        parseToken('else', 'keyword', '\t'*5)
-        parseStatement()
-        parseToken('endif', 'keyword', '\t'*5)
-        return True
-    else:
-        return False
-
-
-def parseForStatement():
-    return False
 
 
 def parseInp():
@@ -362,18 +352,59 @@ def parseOut():
     return F
 
 
+# IfStatement = if CondExpr then DoBlock
+def parseIfStatement():
+    global numRow
+    print('\t'*3 + 'parseIfStatement():')
+    _, lex, tok = getSymb()
+    if lex == 'if' and tok == 'keyword':
+        numRow += 1
+        parseBoolExpr()
+        parseToken('then', 'keyword', '\t'*5)
+        return parseDoBlock()
+    else:
+        return False
+
+
+def parseForStatement():
+    _, lex, tok = getSymb()
+    if lex == 'for' and tok == 'keyword':
+        parseToken('for', 'keyword', '\t'*5)
+        parseToken('(', 'brackets_op', '--\t'*6)
+        parseAssign()
+        parseToken(';', 'punct', '\t'*6)
+        parseBoolExpr()
+        parseToken(';', 'punct', '\t'*6)
+        parseAssign()
+        parseToken(')', 'brackets_op', '--\t'*6)
+        return parseDoBlock()
+    else:
+        return False
+
+
+def parseDoBlock():
+    print('\t'*3 + 'parseDoBlock():')
+    _, lex, tok = getSymb()
+    if lex == '{' and tok == 'brackets_op':
+        parseToken('{', 'brackets_op', '--\t'*6)
+        parseStatementList()
+        parseToken('}', 'brackets_op', '--\t'*6)
+        return 'пропуск символу ;' # для валідації, що після } не має бути ;
+    else:
+        return parseStatement()
+
 # розбір логічного виразу за правиллом
-# BoolExpr = Expression ('='|'<='|'>='|'<'|'>'|'<>') Expression
+# BoolExpr = ArithmExpr RelOp ArithmExpr
 def parseBoolExpr():
     global numRow
-    parseExpression()
+    parseArithmExpr()
     numLine, lex, tok = getSymb()
     if tok in ('rel_op'):
         numRow += 1
-        print('\t'*5+'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+        print('+'+'\t'*5 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
     else:
         failParse('mismatch in BoolExpr', (numLine, lex, tok, 'relop'))
-    parseExpression()
+    parseArithmExpr()
     return True
 
 
