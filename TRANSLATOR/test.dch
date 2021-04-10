@@ -5,9 +5,11 @@ var
     boolean b;
 begin
 	read(r);
+	a = 1 + 2 ^ (3+4) ^ 2 - 4/5 - 6*2;
+	b = 1 + 2 * (3 - 4);
 
-	for(i = -1; i >= -10^2; i = i - 10) {
-		r = r + 10. - .10 / 0.5 div 2 * 10;
+	for(i = -1; i >= 10^2; i = i - 10) {
+		r = r + .10 / 0.5 div 2 * 10;
 	}
 
 	if b != false then
