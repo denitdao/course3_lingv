@@ -12,7 +12,7 @@ DoSection     = begin StatementList end.
 StatementList = Statement {";" Statement} ";".
 Statement     = Assign | Inp | Out | ForStatement | IfStatement.
 
-Assign        = Ident "=" Expression.
+Assign        = Ident "=" ArithmExpr.
 Expression    = ArithmExpr | BoolExpr.
 BoolExpr      = ArithmExpr RelOp ArithmExpr.
 ArithmExpr    = [Sign]Term | ArithmExpr "+" Term | ArithmExpr "-" Term.

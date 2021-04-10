@@ -1,0 +1,6 @@
+program 
+a := 5
+b := 7
+z := 2
+v1 := (a + b)/z
+end

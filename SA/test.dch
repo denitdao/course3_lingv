@@ -1,9 +1,27 @@
 program name
 var
-	real x, y;
+	real x, y, z;
+	integer a, b, c, i, j;
+    boolean t, f;
 begin
-	read(a);
-	if a == b then {
-		x = 10;
-	};
+	read(a, b, c);
+	z = 0 + 3;
+	for(i = -1; i <= a; i = i < b) {
+		x = a div i;
+		y = a / x;
+		if y < x then
+			z = z + x ^ 2 ^ 2 - (15.5 - .2);
+	}
+
+	write(i, z);
+
+	t = true;
+	f = false;
+	for (j = 0; j <= z; j = j + (z div 3))
+		if t == true then {
+			if f != true then
+				f = false;
+			t = f;
+		}
+	write(t);
 end

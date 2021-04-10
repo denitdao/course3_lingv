@@ -1,0 +1,17 @@
+program name
+var
+	real r;
+	integer i;
+    boolean b;
+begin
+	read(r);
+
+	for(i = -1; i >= -10^2; i = i - 10) {
+		r = r + 10. - .10 / 0.5 div 2 * 10;
+	}
+
+	if b != false then
+		b = true;
+
+	write(i, b);
+end
