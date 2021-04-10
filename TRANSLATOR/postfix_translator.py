@@ -13,7 +13,7 @@ numRow = 1
 # кількість записів у таблиці розбору
 len_tableOfSymb = len(tableOfSymb)
 
-toView = True
+toView = False
 
 def postfixTranslator():
     # чи був успішним лексичний розбір
@@ -454,4 +454,4 @@ def parseBoolExpr():
 
 
 # запуск парсера
-postfixTranslator()
+# postfixTranslator()

@@ -134,13 +134,10 @@ def processing():
 	if state in Fstar:  # keyword, id, intnum, realnum
 		token = getToken(state, lexeme)
 		if token not in ('keyword', 'boolval', 'mult_op'):  # не keyword
-			index = indexIdConst(state, lexeme)
-			print('{0:<3d} {1:<12s} {2:<12s} {3:<2d} '.format(
-				numLine, lexeme, token, index))
+			index = indexIdConst(state, lexeme, token)
 			tableOfSymb[len(tableOfSymb)+1] = (numLine, lexeme, token, index)
+			print('got ', (numLine, lexeme, token, index))
 		else:  # якщо keyword, boolval, div
-			print('{0:<3d} {1:<12s} {2:<12s} '.format(
-				numLine, lexeme, token))  # print(numLine,lexeme,token)
 			tableOfSymb[len(tableOfSymb)+1] = (numLine, lexeme, token, '')
 		lexeme = ''
 		numChar = putCharBack(numChar)  # зірочка
@@ -148,7 +145,6 @@ def processing():
 	if state in (8, 9, 11, 12):  # <=, >=, !=, ==, Brackets, ;, ,, Arithmetic
 		lexeme += char
 		token = getToken(state, lexeme)
-		print('{0:<3d} {1:<12s} {2:<12s} '.format(numLine, lexeme, token))
 		tableOfSymb[len(tableOfSymb)+1] = (numLine, lexeme, token, '')
 		lexeme = ''
 		state = initState
@@ -158,7 +154,6 @@ def processing():
 		lexeme += char
 		if charNext != '=':
 			token = getToken(state, lexeme)
-			print('{0:<3d} {1:<12s} {2:<12s} '.format(numLine, lexeme, token))
 			tableOfSymb[len(tableOfSymb)+1] = (numLine, lexeme, token, '')
 			lexeme = ''
 			state = initState
@@ -230,23 +225,32 @@ def getToken(state, lexeme):
 		return tableIdIntRealNum[state]
 
 
-def indexIdConst(state, lexeme):
+def indexIdConst(state, lexeme, token):
 	indx = 0
-	if state == 2:
-		indx = tableOfId.get(lexeme)
-		if indx is None:
+	if state == 2: # id
+		indx1 = tableOfId.get(lexeme)
+		if indx1 is None:
 			indx = len(tableOfId)+1
-			tableOfId[lexeme] = indx
-	if state == 6:
-		indx = tableOfConst.get(lexeme)
-		if indx is None:
+			tableOfId[lexeme] = (indx, 'type_undef', 'val_undef')
+	if state == 6: # intnum
+		indx1 = tableOfConst.get(lexeme)
+		if indx1 is None:
 			indx = len(tableOfConst)+1
-			tableOfConst[lexeme] = indx
-	if state == 5:
-		indx = tableOfConst.get(lexeme)
-		if indx is None:
+			val = int(lexeme)
+			tableOfConst[lexeme] = (indx, token, val)
+			print("saved ", (indx, token, val))
+	if state == 5: # realnum
+		indx1 = tableOfConst.get(lexeme)
+		if indx1 is None:
 			indx = len(tableOfConst)+1
-			tableOfConst[lexeme] = indx
+			val = float(lexeme)
+			tableOfConst[lexeme] = (indx, token, val)
+			print("saved ", (indx, token, val))
+	if not (indx1 is None): 
+		if len(indx1)==2: 
+			indx,_ = indx1
+		else: 
+			indx,_,_ = indx1
 	return indx
 
 
@@ -296,12 +300,5 @@ def tableOfConstToPrint():
 
 # запуск лексичного аналізатора
 # lex()
+# tableToPrint("All")
 
-# Таблиці: розбору, ідентифікаторів та констант
-# print('-' * 30)
-# print('tableOfSymb:')
-# pprint.pprint(tableOfSymb)
-# print('tableOfId:')
-# pprint.pprint(tableOfId)
-# print('tableOfConst:')
-# pprint.pprint(tableOfConst)
