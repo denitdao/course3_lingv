@@ -28,20 +28,44 @@ begin
 	write(t);
 end
 
---------------- working test 1 ---------------
+------------- Simple interpreter test + --------------
+program name
+var
+	real r;
+	integer i;
+    boolean b1, b2;
+begin
+	r = .12;
+	i = 1 + 2 * (3 - 4);
+	i = i + 2 ^ (3+4) ^ 2 - 4/5 - 6*2 + 1;
+	r = r + 10 / 4. div 2. * 10;
+
+	if true > false then 
+		b1 = true;
+
+	if (1 * 2) < (10 - 10) then 
+		b2 = false;
+
+end
+
+--------------- working test 1 + ---------------
 program name
 var
 	real r;
 	integer i;
     boolean b;
 begin
-	read(r);
+	r = -0.1;
+
+	if r >= -1 then
+		b = true;
 
 	for(i = -1; i >= -10^2; i = i - 10) {
 		r = r + 10. - .10 / 0.5 div 2 * 10;
 	}
-
-	if b != false then
+	
+	b = false;
+	if b == false then
 		b = true;
 
 	write(i, b);

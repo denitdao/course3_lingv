@@ -136,7 +136,6 @@ def processing():
 		if token not in ('keyword', 'boolval', 'mult_op'):  # не keyword
 			index = indexIdConst(state, lexeme, token)
 			tableOfSymb[len(tableOfSymb)+1] = (numLine, lexeme, token, index)
-			print('got ', (numLine, lexeme, token, index))
 		else:  # якщо keyword, boolval, div
 			tableOfSymb[len(tableOfSymb)+1] = (numLine, lexeme, token, '')
 		lexeme = ''
@@ -238,19 +237,17 @@ def indexIdConst(state, lexeme, token):
 			indx = len(tableOfConst)+1
 			val = int(lexeme)
 			tableOfConst[lexeme] = (indx, token, val)
-			print("saved ", (indx, token, val))
 	if state == 5: # realnum
 		indx1 = tableOfConst.get(lexeme)
 		if indx1 is None:
 			indx = len(tableOfConst)+1
 			val = float(lexeme)
 			tableOfConst[lexeme] = (indx, token, val)
-			print("saved ", (indx, token, val))
 	if not (indx1 is None): 
-		if len(indx1)==2: 
-			indx,_ = indx1
+		if len(indx1) == 2: 
+			indx, _ = indx1
 		else: 
-			indx,_,_ = indx1
+			indx, _, _ = indx1
 	return indx
 
 
@@ -270,8 +267,8 @@ def tableToPrint(Tbl):
 
 def tableOfSymbToPrint():
 	print("\n Таблиця символів")
-	s1 = '{0:<10s} {1:<10s} {2:<10s} {3:<10s} {4:<5s} '
-	s2 = '{0:<10d} {1:<10d} {2:<10s} {3:<10s} {4:<5s} '
+	s1 = '{0:<10s} {1:<10s} {2:<10s} {3:<10s} {4:<5s}'
+	s2 = '{0:<10d} {1:<10d} {2:<10s} {3:<10s} {4:<5s}'
 	print(s1.format("numRec", "numLine", "lexeme", "token", "index"))
 	for numRec in tableOfSymb:  # range(1,lns+1):
 		numLine, lexeme, token, index = tableOfSymb[numRec]

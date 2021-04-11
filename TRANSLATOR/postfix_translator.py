@@ -121,8 +121,7 @@ def failParse(str, tuple):
         exit(4)  
 
 
-# виводить у консоль інформацію про 
-# перебіг трансляції
+# виводить у консоль інформацію про перебіг трансляції
 def configToPrint(lex, numRow):
     stage = 'Крок трансляції\n'
     stage += 'лексема: \'{0}\'\n'
@@ -162,9 +161,9 @@ def parseDeclarList():
 
 
 def parseDeclaration():
-    F = parseType()
+    F, lex_type = parseType()
     if F:
-        return parseIdentList()
+        return parseIdentList(lex_type)
     return F
 
 
@@ -175,18 +174,18 @@ def parseType():
     if tok == 'keyword' and lex in ('real', 'integer', 'boolean'):
         numRow += 1
         # print('+'+'\t'*3 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
-        return True
+        return (True, lex)
     elif (lex, tok) == ('begin', 'keyword'):
-        return False
+        return (False, 'type_undef')
     else:
         failParse('невідповідність інструкцій', (numLine, lex, tok, 'keyword'))
-        return False
+        return (False, 'type_undef')
 
 
-def parseIdentList():
+def parseIdentList(lex_type):
     global numRow
     # print('\t'*2 + 'parseIdentList():')
-    parseIdent(True)
+    parseIdent(True, lex_type)
 
     F = True
     while F:
@@ -194,20 +193,30 @@ def parseIdentList():
         if tok == 'punct' and lex == ',':
             numRow += 1
             # print('+'+'\t'*3 + 'в рядку {0} - {1}'.format(_numLine, (lex, tok)))
-            parseIdent(True)
+            parseIdent(True, lex_type)
         else:
             F = False
     return True
 
 
-def parseIdent(isDeclar):
-    global numRow, postfixCode
+def parseIdent(isDeclar, type_of_lex = 'type_undef'):
+    global numRow, postfixCode, tableOfId
     # print('\t'*3 + 'parseIdent():')
     # прочитаємо поточну лексему в таблиці розбору
     numLine, lex, tok = getSymb()
     # якщо токен - ідентифікатор
     if tok == 'id':
-        if not isDeclar:
+        if isDeclar:
+            postfixCode.append((lex, tok))
+            if toView: configToPrint(lex, numRow)
+            # add recording of the var type
+            if type_of_lex == 'boolean':
+                tableOfId[lex] = (tableOfId[lex][0], 'boolval', tableOfId[lex][2])
+            if type_of_lex == 'integer':
+                tableOfId[lex] = (tableOfId[lex][0], 'intnum', tableOfId[lex][2])
+            if type_of_lex == 'real':
+                tableOfId[lex] = (tableOfId[lex][0], 'realnum', tableOfId[lex][2])    
+        else:
             postfixCode.append((lex, tok))
             if toView: configToPrint(lex, numRow)
         numRow += 1
@@ -375,7 +384,7 @@ def parseInp():
     F = parseToken('read', 'keyword', '\t'*3)
     if F:
         F = (parseToken('(', 'brackets_op', '\t'*3) and 
-            parseIdentList() and 
+            parseIdentList(None) and 
             parseToken(')', 'brackets_op', '\t'*3))
     return F
 
@@ -386,7 +395,7 @@ def parseOut():
         F = parseToken('(', 'brackets_op', '\t'*3)
         _, lex, tok = getSymb()
         if (lex, tok) != (')', 'brackets_op'):
-            parseIdentList() 
+            parseIdentList(None) 
         F = F and parseToken(')', 'brackets_op', '\t'*3)
     return F
 
