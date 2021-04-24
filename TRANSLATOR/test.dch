@@ -1,21 +1,19 @@
 program name
 var
 	real r;
-	integer i;
-    boolean b;
+	integer i, x, x2, x3;
+    boolean b1, b2;
 begin
-	r = -0.1;
+	x = 10;
+	i = x;
+	r = 2. - i;
+	x2 = 2 ^ (3 ^ 4);
+	x3 = (2 ^ 3) ^ 4;
 
-	if r >= -1 then
-		b = true;
+	if true > false then 
+		b1 = true;
 
-	for(i = -1; i >= -10^2; i = i - 10) {
-		r = r + 10. - .10 / 0.5 div 2 * 10;
-	}
-	
-	b = false;
-	if b == false then
-		b = true;
+	if (1 * 2) < (10 - 10) then 
+		i = 2;
 
-	write(i, b);
 end

@@ -21,18 +21,6 @@ def postfixInterpreter():
         return False
 
 
-# print('-'*30)
-
-# tableToPrint('All')
-# print('\nПочатковий код програми: \n{0}'.format(sourceCode))
-
-# while len(str(postfixCode))==0: pass
-# print('\nКод програми у постфіксній формі (ПОЛІЗ): \n{0}'.format(postfixCode))
-
-# lenCode=len(str(postfixCode))
-# print('\n---------------Код програми у постфіксній формі (ПОЛІЗ): \n{0}'.format(postfixCode))
-
-
 def postfixProcessing():
     global stack, postfixCode
     maxNumb = len(postfixCode)
@@ -40,7 +28,7 @@ def postfixProcessing():
         for i in range(0, maxNumb):
             lex, tok = postfixCode.pop(0)
             if tok in ('intnum', 'realnum', 'boolval', 'id'):
-               stack.push((lex, tok)) # get the defined type of variable
+               stack.push((lex, tok))  # get the defined type of variable
             else:
                 doIt(lex, tok)
             if toView:
@@ -84,7 +72,20 @@ def doIt(lex, tok):
         (lexL, tokL) = stack.pop()
         # зняти з вершини стека ідентифікатор (лівий операнд)
         (lexR, tokR) = stack.pop()
-        print(lexR, lex, lexL, "|", tableOfId[lexR][1], lex, tokL)
+
+        rightWasId = False
+
+        if tokL == 'id':
+            tokL = tableOfId[lexL][1]   
+            rightWasId = True
+             
+        if tokR == 'id':
+            tokR = tableOfId[lexR][1]
+            
+        if rightWasId and tableOfId[lexL][2] == 'val_undef':
+            failRunTime('неініціалізована змінна', (lexL, tableOfId[lexL], (lexL, tokL), lex, (lexR, tokR)))
+
+        print(lexR, lex, lexL, "|", tokR, lex, tokL)
         # виконати операцію:
         # оновлюємо запис у таблиці ідентифікаторів
         # ідентифікатор/змінна
@@ -92,16 +93,18 @@ def doIt(lex, tok):
         # тип - не змінюється,
         # значення - як у константи)
 
-        if tokL != tableOfId[lexR][1] and (tokL, tableOfId[lexR][1]) not in (('intnum', 'realnum')):
+        if tokL != tokR and (tokL, tokR) not in (('intnum', 'realnum')):
             failRunTime('невідповідність типів',
                         ((lexL, tokL), lex, (lexR, tokR)))
         else:
             if (tokL == 'boolval'):
-                tableOfId[lexR] = (tableOfId[lexR][0], tableOfId[lexR][1], True if (lexL == 'true') else False)
+                tableOfId[lexR] = (tableOfId[lexR][0], tokR,
+                                   True if (lexL == 'true') else False)
             else:
+                # handle the case of: var = var
                 tableOfId[lexR] = (tableOfId[lexR][0],
-                            tableOfId[lexR][1], tableOfConst[lexL][2])
-    
+                                   tokR, tableOfId[lexL][2] if rightWasId else tableOfConst[lexL][2])
+
     elif tok in ('add_op', 'mult_op', 'pow_op', 'rel_op'):
         # зняти з вершини стека запис (правий операнд)
         (lexR, tokR) = stack.pop()
@@ -117,11 +120,9 @@ def processing_add_some_op(ltL, lex, tok, ltR):
     global stack, postfixCode, tableOfId, tableOfConst
     lexL, tokL = ltL
     lexR, tokR = ltR
-    old_tokL = tokL # for operations which return left token back to stack
+    old_tokL = tokL  # for operations which return left token back to stack
     if tokL == 'id':
-        # print(('===========', tokL, tableOfId[lexL][1]))
-        # tokL = tableOfId[lexL][1]
-        if tableOfId[lexL][1] == 'type_undef':
+        if tableOfId[lexL][2] == 'val_undef':
             failRunTime('неініціалізована змінна', (lexL,
                                                     tableOfId[lexL], (lexL, tokL), lex, (lexR, tokR)))
         else:
@@ -131,9 +132,7 @@ def processing_add_some_op(ltL, lex, tok, ltR):
     else:
         valL = tableOfConst[lexL][2]
     if tokR == 'id':
-        # print(('===========', tokL, tableOfId[lexL][1]))
-        # tokL = tableOfId[lexL][1]
-        if tableOfId[lexR][1] == 'type_undef':
+        if tableOfId[lexR][2] == 'val_undef':
             failRunTime('неініціалізована змінна', (lexR,
                                                     tableOfId[lexR], (lexL, tokL), lex, (lexR, tokR)))
         else:
@@ -149,7 +148,7 @@ def processing_add_some_op(ltL, lex, tok, ltR):
         getBoolValue((valL, lexL, tokL), lex, (valR, lexR, tokR))
     else:
         failRunTime('невідповідність типів',
-                        ((lexL, tokL), lex, (lexR, tokR)))
+                    ((lexL, tokL), lex, (lexR, tokR)))
 
 
 def getNumValue(vtL, lex, vtR, old_tokL):
@@ -185,7 +184,6 @@ def getNumValue(vtL, lex, vtR, old_tokL):
     elif (tokL, tokR) in (('intnum', 'realnum'), ('realnum', 'intnum')):
         stack.push((str(value), 'realnum'))
         toTableOfConst(value, 'realnum')
-    
 
 
 def getBoolValue(vtL, lex, vtR):
@@ -198,7 +196,7 @@ def getBoolValue(vtL, lex, vtR):
         value = valL > valR
     elif lex == '<':
         value = valL < valR
-    elif lex == '<=' :
+    elif lex == '<=':
         value = valL <= valR
     elif lex == '>=':
         value = valL >= valR
@@ -238,11 +236,3 @@ def failRunTime(str, tuple):
 
 
 postfixInterpreter()
-
-# r = .12
-# i = 1 + 2 * (3 - 4)
-# i = i + 2 ** (3+4) ** 2 - int(4/5) - 6*2 + 1
-# r = r + 10 / 4. % 2. * 10
-# if True > False: 
-#     b1 = True
-# print(r, i, b1)
