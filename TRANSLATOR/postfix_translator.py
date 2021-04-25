@@ -1,5 +1,5 @@
 from lexical_analyzer import lex, tableToPrint
-from lexical_analyzer import tableOfSymb, tableOfId, tableOfConst, sourceCode, FSuccess
+from lexical_analyzer import tableOfSymb, tableOfId, tableOfConst, tableOfLabel, sourceCode, FSuccess
 import pprint
 
 lex()
@@ -14,6 +14,7 @@ numRow = 1
 len_tableOfSymb = len(tableOfSymb)
 
 toView = False
+
 
 def postfixTranslator():
     # чи був успішним лексичний розбір
@@ -32,10 +33,10 @@ def parseProgram():
         parseDoSection()
 
         # повідомити про успішність
-        # синтаксичного аналізу 
+        # синтаксичного аналізу
         # та трансляції програми ПОЛІЗ
         print('Translator: Переклад у ПОЛІЗ та синтаксичний аналіз завершились успішно')
-        print([row[0] for row in postfixCode])
+        # print([row[0] for row in postfixCode])
         FSuccess = (True, 'Translator')
         return FSuccess
     except SystemExit as e:
@@ -118,7 +119,7 @@ def failParse(str, tuple):
         (numLine, lex, tok, expected) = tuple
         print('Parser ERROR: \n\t В рядку {0} неочікуваний елемент ({1}, {2}). \n\t Очікувався - {3}.'.format(
             numLine, lex, tok, expected))
-        exit(4)  
+        exit(4)
 
 
 # виводить у консоль інформацію про перебіг трансляції
@@ -128,7 +129,8 @@ def configToPrint(lex, numRow):
     stage += 'tableOfSymb[{1}] = {2}\n'
     stage += 'postfixCode = {3}\n'
     # tpl = (lex,numRow,str(tableOfSymb[numRow]),str(postfixCode))
-    print(stage.format(lex, numRow, str(tableOfSymb[numRow]), str(postfixCode)))
+    print(stage.format(lex, numRow, str(
+        tableOfSymb[numRow]), str(postfixCode)))
 
 # ---------------------------------- PARSERS ----------------------------------
 
@@ -182,10 +184,10 @@ def parseType():
         return (False, 'type_undef')
 
 
-def parseIdentList(lex_type):
+def parseIdentList(lex_type, ident_afterEach = None):
     global numRow
     # print('\t'*2 + 'parseIdentList():')
-    parseIdent(True, lex_type)
+    parseIdent(True, lex_type, ident_afterEach)
 
     F = True
     while F:
@@ -193,13 +195,13 @@ def parseIdentList(lex_type):
         if tok == 'punct' and lex == ',':
             numRow += 1
             # print('+'+'\t'*3 + 'в рядку {0} - {1}'.format(_numLine, (lex, tok)))
-            parseIdent(True, lex_type)
+            parseIdent(True, lex_type, ident_afterEach)
         else:
             F = False
     return True
 
 
-def parseIdent(isDeclar, type_of_lex = 'type_undef'):
+def parseIdent(isDeclar, type_of_lex='type_undef', afterEach=None):
     global numRow, postfixCode, tableOfId
     # print('\t'*3 + 'parseIdent():')
     # прочитаємо поточну лексему в таблиці розбору
@@ -208,19 +210,25 @@ def parseIdent(isDeclar, type_of_lex = 'type_undef'):
     if tok == 'id':
         if isDeclar:
             postfixCode.append((lex, tok))
-            if toView: configToPrint(lex, numRow)
+            if toView:
+                configToPrint(lex, numRow)
             # add recording of the var type
             if type_of_lex == 'boolean':
-                tableOfId[lex] = (tableOfId[lex][0], 'boolval', tableOfId[lex][2])
+                tableOfId[lex] = (tableOfId[lex][0],
+                                  'boolval', tableOfId[lex][2])
             if type_of_lex == 'integer':
-                tableOfId[lex] = (tableOfId[lex][0], 'intnum', tableOfId[lex][2])
+                tableOfId[lex] = (tableOfId[lex][0],
+                                  'intnum', tableOfId[lex][2])
             if type_of_lex == 'real':
-                tableOfId[lex] = (tableOfId[lex][0], 'realnum', tableOfId[lex][2])    
+                tableOfId[lex] = (tableOfId[lex][0],
+                                  'realnum', tableOfId[lex][2])
         else:
             postfixCode.append((lex, tok))
-            if toView: configToPrint(lex, numRow)
+            if toView:
+                configToPrint(lex, numRow)
         numRow += 1
         # print('+'+'\t'*4 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
+        if afterEach != None: postfixCode.append(afterEach)
         return True
     else:
         failParse('невідповідність інструкцій', (numLine, lex, tok, 'id'))
@@ -236,7 +244,7 @@ def parseStatementList():
             pass
         elif F == True:
             parseToken(';', 'punct', '\t')
-        else: 
+        else:
             break
     return True
 
@@ -274,10 +282,11 @@ def parseAssign():
     parseIdent(False)
     if parseToken('=', 'assign_op', '\t'*3):
         tempRow = numRow
-        result = parseArithmExpr() # Трансляція (тут нічого не робити)
-        postfixCode.append(('=', 'assign_op')) # Трансляція   
+        result = parseArithmExpr()  # Трансляція (тут нічого не робити)
+        postfixCode.append(('=', 'assign_op'))  # Трансляція
         # Бінарний оператор '=' додається після своїх операндів
-        if toView: configToPrint('=', tempRow)
+        if toView:
+            configToPrint('=', tempRow)
         return result
     else:
         return False
@@ -286,7 +295,7 @@ def parseAssign():
 def parseArithmExpr():
     global numRow, postfixCode
     # print('\t'*4 + 'parseArithmExpr():')
-    
+
     # символи '+' або '-'
     _numLine, lex, tok = getSymb()
     if (tok == 'add_op'):
@@ -295,10 +304,12 @@ def parseArithmExpr():
         parseTerm()
         if (lex == '+'):
             postfixCode.append(('POS', tok))
-            if toView: configToPrint('POS', tempRow)
+            if toView:
+                configToPrint('POS', tempRow)
         else:
             postfixCode.append(('NEG', tok))
-            if toView: configToPrint('NEG', tempRow)
+            if toView:
+                configToPrint('NEG', tempRow)
         # print('+'+'\t'*5 + 'в рядку {0} - {1}'.format(_numLine, (lex, tok)))
     else:
         parseTerm()
@@ -312,7 +323,8 @@ def parseArithmExpr():
             # print('+'+'\t'*5 + 'в рядку {0} - {1}'.format(_numLine, (lex, tok)))
             parseTerm()
             postfixCode.append((lex, tok))
-            if toView: configToPrint(lex, numRow)
+            if toView:
+                configToPrint(lex, numRow)
         else:
             F = False
     return True
@@ -329,16 +341,18 @@ def parseTerm():
     while F:
         _numLine, lex, tok = getSymb()
         if tok == 'mult_op':
-            for row in tempPowOpHolder: # nothing to print if had no pows
+            for row in tempPowOpHolder:  # nothing to print if had no pows
                 postfixCode.append(row[0], row[1])
-                if toView: configToPrint(row[0], row[2])
+                if toView:
+                    configToPrint(row[0], row[2])
             tempPowOpHolder = []
             tempRow = numRow
             numRow += 1
             # print('+'+'\t'*6 + 'в рядку {0} - {1}'.format(_numLine, (lex, tok)))
             parseFactor()
             postfixCode.append((lex, tok))
-            if toView: configToPrint(lex, tempRow)
+            if toView:
+                configToPrint(lex, tempRow)
         elif tok == 'pow_op':
             tempPowOpHolder.append((lex, tok, numRow))
             numRow += 1
@@ -346,11 +360,12 @@ def parseTerm():
             parseFactor()
         else:
             F = False
-    
-    for row in tempPowOpHolder: # nothing to print if had no pows
+
+    for row in tempPowOpHolder:  # nothing to print if had no pows
         postfixCode.append((row[0], row[1]))
-        if toView: configToPrint(row[0], row[2])
-    
+        if toView:
+            configToPrint(row[0], row[2])
+
     return True
 
 
@@ -363,7 +378,8 @@ def parseFactor():
     # якщо лексема - це константа або ідентифікатор
     if tok in ('intnum', 'realnum', 'boolval', 'id'):
         postfixCode.append((lex, tok))
-        if toView: configToPrint(lex, numRow)
+        if toView:
+            configToPrint(lex, numRow)
 
         numRow += 1
         # print('+'+'\t'*6 + 'в рядку {0} - {1}'.format(numLine, (lex, tok)))
@@ -372,7 +388,7 @@ def parseFactor():
     # якщо лексема - це відкриваюча дужка
     elif lex == '(' and tok == 'brackets_op':
         parseToken('(', 'brackets_op', '--\t'*6)
-        parseArithmExpr() # Трансляція (тут нічого не робити)
+        parseArithmExpr()  # Трансляція (тут нічого не робити)
         parseToken(')', 'brackets_op', '--\t'*6)
     else:
         failParse('невідповідність у Expression.Factor', (numLine, lex,
@@ -383,9 +399,9 @@ def parseFactor():
 def parseInp():
     F = parseToken('read', 'keyword', '\t'*3)
     if F:
-        F = (parseToken('(', 'brackets_op', '\t'*3) and 
-            parseIdentList(None) and 
-            parseToken(')', 'brackets_op', '\t'*3))
+        F = (parseToken('(', 'brackets_op', '\t'*3) and
+             parseIdentList(None, ('IN', 'iocmnd')) and
+             parseToken(')', 'brackets_op', '\t'*3))
     return F
 
 
@@ -395,7 +411,7 @@ def parseOut():
         F = parseToken('(', 'brackets_op', '\t'*3)
         _, lex, tok = getSymb()
         if (lex, tok) != (')', 'brackets_op'):
-            parseIdentList(None) 
+            parseIdentList(None, ('OUT', 'iocmnd'))
         F = F and parseToken(')', 'brackets_op', '\t'*3)
     return F
 
@@ -410,7 +426,15 @@ def parseIfStatement():
         # print('+'+'\t'*4 + 'в рядку {0} - {1}'.format(_numLine, (lex, tok)))
         parseBoolExpr()
         parseToken('then', 'keyword', '\t'*4)
-        return parseDoBlock()
+        # generate label
+        m1 = createLabel()
+        postfixCode.append(m1)
+        postfixCode.append(('JF', 'jump'))
+
+        F = parseDoBlock()
+
+        setValLabel(m1)
+        return F
     else:
         return False
 
@@ -418,15 +442,37 @@ def parseIfStatement():
 def parseForStatement():
     _, lex, tok = getSymb()
     if lex == 'for' and tok == 'keyword':
+        start = createLabel()
+        action = createLabel()
+        increment = createLabel()
+        leave = createLabel()
         parseToken('for', 'keyword', '\t'*5)
         parseToken('(', 'brackets_op', '--\t'*6)
         parseAssign()
+
+        setValLabel(start) # add point of start
         parseToken(';', 'punct', '\t'*6)
         parseBoolExpr()
         parseToken(';', 'punct', '\t'*6)
+        postfixCode.append(leave) # go to leave if bool = false or to the next lable
+        postfixCode.append(('JF', 'jump'))
+        postfixCode.append(action) # after start - jump to action 
+        postfixCode.append(('JMP', 'jump'))
+
+        setValLabel(increment) # add point of increment
         parseAssign()
         parseToken(')', 'brackets_op', '--\t'*6)
-        return parseDoBlock()
+        postfixCode.append(start) # after increment - jump to start
+        postfixCode.append(('JMP', 'jump'))
+
+        setValLabel(action) # add point where to start the action
+        F = parseDoBlock()
+        
+        postfixCode.append(increment) # after action - jump to increment
+        postfixCode.append(('JMP', 'jump'))
+        
+        setValLabel(leave) # point to leave
+        return F
     else:
         return False
 
@@ -438,7 +484,7 @@ def parseDoBlock():
         parseToken('{', 'brackets_op', '--\t'*4)
         parseStatementList()
         parseToken('}', 'brackets_op', '--\t'*4)
-        return 'пропуск символу ;' # для валідації, що після } не має бути ;
+        return 'пропуск символу ;'  # для валідації, що після } не має бути ;
     else:
         return parseStatement()
 
@@ -458,9 +504,28 @@ def parseBoolExpr():
     parseArithmExpr()
 
     postfixCode.append((lex, tok))
-    if toView: configToPrint(lex, tempRow)
+    if toView:
+        configToPrint(lex, tempRow)
     return True
 
 
+def createLabel():
+    global tableOfLabel
+    nmb = len(tableOfLabel) + 1
+    lexeme = "m"+str(nmb)
+    tableOfLabel[lexeme] = 'value_undef'
+    tok = 'label'
+    return (lexeme, tok)
+
+
+def setValLabel(lbl):
+    global tableOfLabel
+    lex, _tok = lbl
+    tableOfLabel[lex] = len(postfixCode)
+    return True
+
 # запуск парсера
 # postfixTranslator()
+
+# pprint.pprint(tableOfLabel)
+# print(postfixCode[24])
