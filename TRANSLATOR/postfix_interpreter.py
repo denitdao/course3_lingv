@@ -2,6 +2,7 @@ from lexical_analyzer import lex, tableToPrint
 from lexical_analyzer import tableOfSymb, tableOfId, tableOfConst, tableOfLabel, sourceCode
 from postfix_translator import postfixTranslator, postfixCode, FSuccess
 from my_stack import Stack
+import pprint
 
 stack = Stack()
 instrNum = 0
@@ -15,8 +16,12 @@ def postfixInterpreter():
     # чи була успішною трансляція
     if (True, 'Translator') == FSuccess:
         # print('\nПостфіксний код: \n{0}'.format(postfixCode))
+        F = postfixProcessing()
         if simplePrint: tableToPrint("all")
-        return postfixProcessing()
+        # pprint.pprint(postfixCode)
+        for i in range(len(postfixCode)):
+            print(i, postfixCode[i])
+        return F
     else:
         # Повідомити про факт виявлення помилки
         print('Interpreter: Translator завершив роботу аварійно')
@@ -28,7 +33,7 @@ def postfixProcessing():
     maxNumb = len(postfixCode)
     cycle = 0
     try:
-        while instrNum < maxNumb and cycle < 100:
+        while instrNum < maxNumb and cycle < 300:
             lex, tok = postfixCode[instrNum]
             if tok in ('intnum', 'realnum', 'boolval', 'id', 'label'):
                 stack.push((lex, tok))  # get the defined type of variable

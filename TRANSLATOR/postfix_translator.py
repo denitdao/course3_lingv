@@ -528,4 +528,4 @@ def setValLabel(lbl):
 # postfixTranslator()
 
 # pprint.pprint(tableOfLabel)
-# print(postfixCode[24])
+#  print(postfixCode[24])

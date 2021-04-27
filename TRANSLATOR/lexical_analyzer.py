@@ -262,6 +262,7 @@ def tableToPrint(Tbl):
 		tableOfSymbToPrint()
 		tableOfIdToPrint()
 		tableOfConstToPrint()
+		tableOfLabelToPrint()
 	return True
 
 
@@ -294,6 +295,17 @@ def tableOfConstToPrint():
 		index, type, val = tableOfConst[cnst]
 		print(s2.format(str(cnst), index, type, val))
 
+
+def tableOfLabelToPrint():
+	if len(tableOfLabel)==0: print("\n Таблиця міток - порожня")
+	else: 
+		s1 = '{0:<10s} {1:<10s} '
+		print("\n Таблиця міток")
+		print(s1.format("Label","Value"))
+		s2 = '{0:<10s} {1:<10d} '
+		for lbl in tableOfLabel: 
+			val = tableOfLabel[lbl]
+			print(s2.format(lbl,val))
 
 # запуск лексичного аналізатора
 # lex()

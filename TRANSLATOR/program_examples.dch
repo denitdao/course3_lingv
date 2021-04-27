@@ -3,7 +3,7 @@ program name
 var
 	real x, y, z;
 	integer a, b, c, i, j;
-    boolean t, f;
+	boolean t, f;
 begin
 	read(a, b, c);
 	z = 0.;

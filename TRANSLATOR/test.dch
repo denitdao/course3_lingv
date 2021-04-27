@@ -1,19 +1,11 @@
 program name
 var
-	real r;
-	integer i;
-    boolean b1, b2;
+	real x;
+	integer a;
+	boolean b;
 begin
-	r = .12;
-	i = 1 + 2 * (3 - 4);
-	i = i + 2 ^ (3+4) ^ 2 - 4/5 - 6*2 + 1;
-	r = r + 10 / 4. div 2. * 10;
-
-	if true > false then 
-		b1 = true;
-
-	if (1 * 2) < (10 - 10) then 
-		b2 = false;
-	write(i, r);
-	
+	a = 2 + true;
+	b = true;
+	if 1 == true then
+		write(b);
 end

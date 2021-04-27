@@ -14,7 +14,7 @@ Statement     = Assign | Inp | Out | ForStatement | IfStatement.
 
 Assign        = Ident "=" ArithmExpr.
 Expression    = ArithmExpr | BoolExpr.
-BoolExpr      = ArithmExpr RelOp ArithmExpr.
+BoolExpr      = Expression RelOp Expression.
 ArithmExpr    = [Sign]Term | ArithmExpr "+" Term | ArithmExpr "-" Term.
 Term          = Factor | Term "*" Factor | Term "/" Factor 
         | Term "div" Factor | Term "^" Factor.
