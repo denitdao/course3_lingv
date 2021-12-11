@@ -60,7 +60,7 @@ begin
 	if r >= -1 then
 		b = true;
 
-	for(i = -1; i >= -10^2; i = i - 10) {
+	for (i = -1; i >= -10^2; i = i - 10) {
 		r = r + 10. - .10 / 0.5 div 2 * 10;
 	}
 	
@@ -81,8 +81,8 @@ begin
 	read(a);
 	j=10;
 	for(i =-1; i<= j; i =i+ a ) {
-		if b ==true then
-			b = i + a ^2;
+		if b == true then
+			x = i + a ^ 2;
 		write( b);
 	}
 	if b!= false then
@@ -108,7 +108,7 @@ var
 	real x, y;
 begin
 	read(a);
-	if a = b then {
-		x == 10;
-	};
+	if a == b then {
+		x = 10;
+	}
 end

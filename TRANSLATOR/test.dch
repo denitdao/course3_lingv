@@ -1,11 +1,15 @@
-program name
+program example1 
 var
-	real x;
-	integer a;
+	integer i, u;
+	real r, k;
 	boolean b;
 begin
-	a = 2 + true;
-	b = true;
-	if 1 == true then
-		write(b);
+	r = 10.;
+	k = 0.;
+	read(u);
+	for (i = 0; i < u; i = i + 1)
+		if r == 10 then {
+			k = k + r * u;
+			write(k);
+		}
 end
