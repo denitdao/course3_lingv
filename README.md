@@ -27,8 +27,9 @@ for ( <ідентифікатор> = <вираз>; <відношення>; <ід
 }
 ```
 Розширено для виконання не тільки послідовності, а й одиночного оператора.
-<img width="476" alt="image" src="https://user-images.githubusercontent.com/49095078/236812242-0d6e029a-527f-40e5-834e-184d9d06eda8.png">
-<img width="368" alt="image" src="https://user-images.githubusercontent.com/49095078/236812262-b8486d82-8ff3-43c5-974a-91e06fd0a7e7.png">
+
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/49095078/236812242-0d6e029a-527f-40e5-834e-184d9d06eda8.png">
+<img width="300" alt="image" src="https://user-images.githubusercontent.com/49095078/236812262-b8486d82-8ff3-43c5-974a-91e06fd0a7e7.png">
 
 
 ### Умовний оператор
@@ -39,8 +40,8 @@ if <логічний вираз> then
 ```
 Розширено для використання послідовності операторів.
 
-<img width="259" alt="image" src="https://user-images.githubusercontent.com/49095078/236812391-e099b378-75a8-45d2-8a2a-d80087f8a844.png">
-<img width="272" alt="image" src="https://user-images.githubusercontent.com/49095078/236812408-8c16f823-8d33-43b2-8043-862536fc9ff4.png">
+<img width="180" alt="image" src="https://user-images.githubusercontent.com/49095078/236812391-e099b378-75a8-45d2-8a2a-d80087f8a844.png">
+<img width="200" alt="image" src="https://user-images.githubusercontent.com/49095078/236812408-8c16f823-8d33-43b2-8043-862536fc9ff4.png">
 
 ### Структура програмного засобу
 
